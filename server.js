@@ -55,7 +55,7 @@ const OptionMenu = () => {
       else if(response.Option == 'Add a role'){
           AddRole();
       }
-      else if(response.Option == 'Add a employee'){
+      else if(response.Option == 'Add an employee'){
           AddEmployee();
       }
       else {
@@ -115,6 +115,9 @@ const AddDepartment = () => {
 }
 
 const AddRole = () => { //is this correct?
+  db.query('SELECT * FROM department', function (err, results) {
+    console.log(results);
+  });
   inquirer    
   .prompt([
       {
@@ -158,6 +161,9 @@ const AddRole = () => { //is this correct?
 }
 
 const AddEmployee = () => { //is this correct?
+  db.query('SELECT * FROM role', function (err, results) {
+    console.log(results);
+  });
   inquirer    
   .prompt([
       {
@@ -175,24 +181,18 @@ const AddEmployee = () => { //is this correct?
          message: "Enter the last name you want to add",
       },
       {
+        //provide list of avaliable role ids
         // WHEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
         type: "input",
         // message: "Which employee member do you want to add?",
         name: "AddRoleId",
         message: "Enter the role Id you want to add",
-     },
-     {
-      // WHEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
-      type: "input",
-      // message: "Which employee member do you want to add?",
-      name: "Add",
-      message: "Enter the employee Id you want to add",
-   },
-
+     }
+     //Need to figure out how to add a Role Id...
 
   ])
   .then((response) => {
-    db.query(`INSERT INTO role (first_name, last_name, role_id, employee_id) VALUES (?, ?, ?, ?)`, [response.AddFirst_name, response.AddLast_name, response.AddRoleId, response.AddDepartmentId], (err, result) => {
+    db.query(`INSERT INTO role (first_name, last_name, role_id) VALUES (?, ?, ?)`, [response.AddFirst_name, response.AddLast_name, response.AddRoleId], (err, result) => {
       if (err) {
         console.log(err);
       }
