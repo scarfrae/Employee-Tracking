@@ -1,13 +1,7 @@
-const express = require('express');
+
 // Import and require mysql2
 const mysql = require('mysql2');
 
-const PORT = process.env.PORT || 3001;
-const app = express();
-
-// Express middleware
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
 
 // Connect to database
 const db = mysql.createConnection(
@@ -17,109 +11,188 @@ const db = mysql.createConnection(
     user: 'root',
     // TODO: Add MySQL password here
     password: 'password',
-    database: 'movies_db'
+    database: 'department_db'
   },
-  console.log(`Connected to the movies_db database.`)
+  console.log(`Connected to the department_db database.`)
 );
 
-// Create a movie
-app.post('/api/new-movie', ({ body }, res) => {
-  const sql = `INSERT INTO movies (movie_name)
-    VALUES (?)`;
-  const params = [body.movie_name];
-  
-  db.query(sql, params, (err, result) => {
-    if (err) {
-      res.status(400).json({ error: err.message });
-      return;
-    }
-    res.json({
-      message: 'success',
-      data: body
+const OptionMenu = () => {
+  inquirer    
+  .prompt([
+      {
+          // WHEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
+          type: "list",
+          // message: "Which team member do you want to add?",
+          name: "Option",
+          choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role'],
+          // validate: (Function) Receive the user input and answers hash. Should return true if the value is valid, and an error message (String) otherwise. If false is returned, a default error message is provided.
+          validate: OptionInput => {
+              if(OptionInput){
+                  return true;
+              }
+              else{
+                  console.log("Please choose an option!")
+                  return false;
+              }
+          }
+      }
+
+  ])
+  .then((response) => {
+      if(response.Option == 'View all departments'){
+          ViewDepartments();
+      }
+      else if(response.Option == 'View all roles'){
+          ViewRole();
+      }
+      else if(response.Option == 'View all employees'){
+          ViewEmployees();
+      }
+      else if(response.Option == 'Add a department'){
+          AddDepartment();
+      }
+      else if(response.Option == 'Add a role'){
+          AddRole();
+      }
+      else if(response.Option == 'Add a employee'){
+          AddEmployee();
+      }
+      else {
+          UpdateEmployee();
+      }
+  })
+
+}
+
+OptionMenu();
+
+const ViewDepartments = () => {
+  // Query database
+db.query('SELECT * FROM department', function (err, results) {
+  console.log(results);
+});
+}
+
+const ViewRole = () => {
+  // Query database
+db.query('SELECT * FROM role', function (err, results) {
+  console.log(results);
+});
+}
+
+const ViewEmployees = () => {
+db.query('SELECT * FROM employee', function (err, results) {
+  console.log(results);
+});
+}
+
+const AddDepartment = () => {
+  inquirer    
+  .prompt([
+      {
+          // WHEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
+          type: "input",
+          // message: "Which team member do you want to add?",
+          name: "AddDepartment",
+          message: "Enter the department you want to add",
+      }
+
+  ])
+  .then((response) => {
+    db.query(`INSERT INTO department (department_name) VALUES (?)`, response.AddDepartment, (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      console.log(result);
     });
-  });
-});
+  })
 
-// Read all movies
-app.get('/api/movies', (req, res) => {
-  const sql = `SELECT id, movie_name AS title FROM movies`;
-  
-  db.query(sql, (err, rows) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-       return;
-    }
-    res.json({
-      message: 'success',
-      data: rows
+}
+
+const AddRole = () => { //is this correct?
+  inquirer    
+  .prompt([
+      {
+          // WHEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
+          type: "input",
+          // message: "Which team member do you want to add?",
+          name: "AddRole",
+          message: "Enter the role you want to add",
+      }
+
+  ])
+  .then((response) => {
+    db.query(`INSERT INTO role (title) VALUES (?)`, response.AddRole, (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      console.log(result);
     });
-  });
-});
-
-// Delete a movie
-app.delete('/api/movie/:id', (req, res) => {
-  const sql = `DELETE FROM movies WHERE id = ?`;
-  const params = [req.params.id];
-  
-  db.query(sql, params, (err, result) => {
-    if (err) {
-      res.statusMessage(400).json({ error: res.message });
-    } else if (!result.affectedRows) {
-      res.json({
-      message: 'Movie not found'
-      });
-    } else {
-      res.json({
-        message: 'deleted',
-        changes: result.affectedRows,
-        id: req.params.id
-      });
-    }
-  });
-});
-
-// Read list of all reviews and associated movie name using LEFT JOIN
-app.get('/api/movie-reviews', (req, res) => {
-  const sql = `SELECT movies.movie_name AS movie, reviews.review FROM reviews LEFT JOIN movies ON reviews.movie_id = movies.id ORDER BY movies.movie_name;`;
-  db.query(sql, (err, rows) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
-    res.json({
-      message: 'success',
-      data: rows
+    db.query(`INSERT INTO role (salary) VALUES (?)`, response.AddRole, (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      console.log(result);
     });
-  });
-});
+    db.query(`INSERT INTO role (department_id) VALUES (?)`, response.AddRole, (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      console.log(result);
+    });
 
-// BONUS: Update review name
-app.put('/api/review/:id', (req, res) => {
-  const sql = `UPDATE reviews SET review = ? WHERE id = ?`;
-  const params = [req.body.review, req.params.id];
+  })
 
-  db.query(sql, params, (err, result) => {
-    if (err) {
-      res.status(400).json({ error: err.message });
-    } else if (!result.affectedRows) {
-      res.json({
-        message: 'Movie not found'
-      });
-    } else {
-      res.json({
-        message: 'success',
-        data: req.body,
-        changes: result.affectedRows
-      });
-    }
-  });
-});
+}
 
-// Default response for any other request (Not Found)
-app.use((req, res) => {
-  res.status(404).end();
-});
+const AddEmployee = () => { //is this correct?
+  inquirer    
+  .prompt([
+      {
+          // WHEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
+          type: "input",
+          // message: "Which team member do you want to add?",
+          name: "AddEmployee",
+          message: "Enter the employee you want to add",
+      }
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+  ])
+  .then((response) => {
+    db.query(`INSERT INTO employee (first_name) VALUES (?)`, response.AddEmployee, (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      console.log(result);
+    });
+    db.query(`INSERT INTO employee (last_name) VALUES (?)`, response.AddEmployee, (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      console.log(result);
+    });
+    db.query(`INSERT INTO employee (role_id) VALUES (?)`, response.AddEmployee, (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      console.log(result);
+    });
+    db.query(`INSERT INTO employee (manager_id) VALUES (?)`, response.AddEmployee, (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      console.log(result);
+    });
+
+  })
+
+}
+
+
+
+
+
+
+
+
+
+
