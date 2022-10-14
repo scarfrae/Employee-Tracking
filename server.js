@@ -1,6 +1,7 @@
 
 // Import and require mysql2
 const mysql = require('mysql2');
+const inquirer = require('inquirer');
 
 
 // Connect to database
@@ -70,6 +71,7 @@ const ViewDepartments = () => {
   // Query database
 db.query('SELECT * FROM department', function (err, results) {
   console.log(results);
+  OptionMenu();
 });
 }
 
@@ -77,12 +79,14 @@ const ViewRole = () => {
   // Query database
 db.query('SELECT * FROM role', function (err, results) {
   console.log(results);
+  OptionMenu();
 });
 }
 
 const ViewEmployees = () => {
 db.query('SELECT * FROM employee', function (err, results) {
   console.log(results);
+  OptionMenu();
 });
 }
 
@@ -104,6 +108,7 @@ const AddDepartment = () => {
         console.log(err);
       }
       console.log(result);
+      OptionMenu();
     });
   })
 
@@ -113,32 +118,39 @@ const AddRole = () => { //is this correct?
   inquirer    
   .prompt([
       {
+        // WHEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
+        type: "input",
+        // message: "Which team member do you want to add?",
+        name: "AddTitle",
+        message: "Please enter the title you want to add",
+          
+          
+      },
+      {
           // WHEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
           type: "input",
           // message: "Which team member do you want to add?",
-          name: "AddRole",
-          message: "Enter the role you want to add",
-      }
+          name: "AddSalary",
+          message: "Please enter the salary you want to add",
+            
+      },
+      {
+        // WHEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
+        type: "input",
+        // message: "Which team member do you want to add?",
+        name: "AddDepartmentId",
+        message: "Please enter the Department Id you want to add",
+        
+  }
 
   ])
   .then((response) => {
-    db.query(`INSERT INTO role (title) VALUES (?)`, response.AddRole, (err, result) => {
+    db.query(`INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)`, [response.AddRole, response.AddSalary, response.AddDepartmentId], (err, result) => {
       if (err) {
         console.log(err);
       }
       console.log(result);
-    });
-    db.query(`INSERT INTO role (salary) VALUES (?)`, response.AddRole, (err, result) => {
-      if (err) {
-        console.log(err);
-      }
-      console.log(result);
-    });
-    db.query(`INSERT INTO role (department_id) VALUES (?)`, response.AddRole, (err, result) => {
-      if (err) {
-        console.log(err);
-      }
-      console.log(result);
+      OptionMenu();
     });
 
   })
@@ -151,36 +163,41 @@ const AddEmployee = () => { //is this correct?
       {
           // WHEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
           type: "input",
-          // message: "Which team member do you want to add?",
-          name: "AddEmployee",
-          message: "Enter the employee you want to add",
-      }
+          // message: "Which employee do you want to add?",
+          name: "AddFirst_name",
+          message: "Enter the first name you want to add",
+      },
+      {
+         // WHEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
+         type: "input",
+         // message: "Which employee member do you want to add?",
+         name: "AddLast_name",
+         message: "Enter the last name you want to add",
+      },
+      {
+        // WHEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
+        type: "input",
+        // message: "Which employee member do you want to add?",
+        name: "AddRoleId",
+        message: "Enter the role Id you want to add",
+     },
+     {
+      // WHEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
+      type: "input",
+      // message: "Which employee member do you want to add?",
+      name: "Add",
+      message: "Enter the employee Id you want to add",
+   },
+
 
   ])
   .then((response) => {
-    db.query(`INSERT INTO employee (first_name) VALUES (?)`, response.AddEmployee, (err, result) => {
+    db.query(`INSERT INTO role (first_name, last_name, role_id, employee_id) VALUES (?, ?, ?, ?)`, [response.AddFirst_name, response.AddLast_name, response.AddRoleId, response.AddDepartmentId], (err, result) => {
       if (err) {
         console.log(err);
       }
       console.log(result);
-    });
-    db.query(`INSERT INTO employee (last_name) VALUES (?)`, response.AddEmployee, (err, result) => {
-      if (err) {
-        console.log(err);
-      }
-      console.log(result);
-    });
-    db.query(`INSERT INTO employee (role_id) VALUES (?)`, response.AddEmployee, (err, result) => {
-      if (err) {
-        console.log(err);
-      }
-      console.log(result);
-    });
-    db.query(`INSERT INTO employee (manager_id) VALUES (?)`, response.AddEmployee, (err, result) => {
-      if (err) {
-        console.log(err);
-      }
-      console.log(result);
+      OptionMenu();
     });
 
   })
