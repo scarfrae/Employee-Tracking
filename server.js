@@ -116,7 +116,7 @@ const AddDepartment = () => {
 
 const AddRole = () => { //is this correct?
   db.query('SELECT * FROM department', function (err, results) {
-    console.log(results);
+    console.table(results);
   });
   inquirer    
   .prompt([
@@ -143,12 +143,20 @@ const AddRole = () => { //is this correct?
         // message: "Which team member do you want to add?",
         name: "AddDepartmentId",
         message: "Please enter the Department Id you want to add",
-        
-  }
+
+    }
 
   ])
+  
   .then((response) => {
-    db.query(`INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)`, [response.AddRole, response.AddSalary, response.AddDepartmentId], (err, result) => {
+    db.query(`INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)`, [response.AddTitle, response.AddSalary, response.AddDepartmentId], (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      console.log(result);
+      OptionMenu();
+    });
+    db.query(`INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)`, [response.AddTitle, response.AddSalary, response.AddDepartmentId], (err, result) => {
       if (err) {
         console.log(err);
       }
@@ -157,13 +165,16 @@ const AddRole = () => { //is this correct?
     });
 
   })
-
 }
+
+
 
 const AddEmployee = () => { //is this correct?
   db.query('SELECT * FROM role', function (err, results) {
-    console.log(results);
+    console.log("\n")
+    console.table(results);
   });
+
   inquirer    
   .prompt([
       {
@@ -171,14 +182,14 @@ const AddEmployee = () => { //is this correct?
           type: "input",
           // message: "Which employee do you want to add?",
           name: "AddFirst_name",
-          message: "Enter the first name you want to add",
+          message: "Enter the first name you want to add:",
       },
       {
          // WHEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
          type: "input",
          // message: "Which employee member do you want to add?",
          name: "AddLast_name",
-         message: "Enter the last name you want to add",
+         message: "Enter the last name you want to add:",
       },
       {
         //provide list of avaliable role ids
@@ -186,22 +197,72 @@ const AddEmployee = () => { //is this correct?
         type: "input",
         // message: "Which employee member do you want to add?",
         name: "AddRoleId",
-        message: "Enter the role Id you want to add",
-     }
+        message: "Enter the role Id you want to add(Refer to the table above):",
+     },
+     {
+      //provide list of avaliable role ids
+      // WHEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
+      type: "list",
+      // message: "Which employee member do you want to add?",
+      name: "AddManager",
+      message: "Enter the manageryou want to add:",
+      choices: []
+   }
+
      //Need to figure out how to add a Role Id...
 
   ])
   .then((response) => {
-    db.query(`INSERT INTO role (first_name, last_name, role_id) VALUES (?, ?, ?)`, [response.AddFirst_name, response.AddLast_name, response.AddRoleId], (err, result) => {
+    db.query(`INSERT INTO employee (first_name, last_name, role_id) VALUES (?, ?, ?)`, [response.AddFirst_name, response.AddLast_name, response.AddRoleId], (err, result) => {
       if (err) {
         console.log(err);
       }
       console.log(result);
       OptionMenu();
     });
-
   })
+}
 
+const UpdateEmployee = () => {
+  db.query('SELECT * FROM employee', function (err, results) {
+    console.log("\n")
+    console.table(results);
+  });
+  db.query('SELECT * FROM role', function (err, results) {
+    console.log("\n")
+    console.table(results);
+  });
+  inquirer    
+  .prompt([
+      {
+        //provide list of avaliable role ids
+        // WHEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
+        type: "input",
+        // message: "Which employee member do you want to add?",
+        name: "SelectEmployee",
+        message: "Enter the employee id you want to update(Refer to the table above):" + "\n",
+      },
+      {
+        //provide list of avaliable role ids
+        // WHEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
+        type: "input",
+        // message: "Which employee member do you want to add?",
+        name: "UpdateRoleId",
+        message: "Enter the role you want to update to(Refer to the table above):",
+     }
+     
+     //Need to figure out how to add a Role Id...
+
+  ])
+  .then((response) => {
+    db.query('UPDATE employee SET role_id = ? WHERE id = ?', [response.UpdateRoleId, response.SelectEmployee], (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      console.log(result);
+      OptionMenu();
+    });
+  })
 }
 
 

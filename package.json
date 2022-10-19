@@ -1,6 +1,26 @@
 {
   "dependencies": {
+    "cfonts": "^3.1.1",
+    "console.table": "^0.10.0",
     "inquirer": "^8.2.4",
     "mysql2": "^2.3.3"
-  }
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "employee-tracking",
+  "description": "## Your Task",
+  "version": "1.0.0",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scarfrae/Employee-Tracking.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/scarfrae/Employee-Tracking/issues"
+  },
+  "homepage": "https://github.com/scarfrae/Employee-Tracking#readme"
 }
