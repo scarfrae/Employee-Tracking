@@ -2,6 +2,7 @@
 // Import and require mysql2
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
+const { title } = require('process');
 
 
 // Connect to database
@@ -70,7 +71,7 @@ OptionMenu();
 const ViewDepartments = () => {
   // Query database
 db.query('SELECT * FROM department', function (err, results) {
-  console.log(results);
+  console.table(results);
   OptionMenu();
 });
 }
@@ -78,14 +79,14 @@ db.query('SELECT * FROM department', function (err, results) {
 const ViewRole = () => {
   // Query database
 db.query('SELECT * FROM role', function (err, results) {
-  console.log(results);
+  console.table(results);
   OptionMenu();
 });
 }
 
 const ViewEmployees = () => {
 db.query('SELECT * FROM employee', function (err, results) {
-  console.log(results);
+  console.table(results);
   OptionMenu();
 });
 }
@@ -116,6 +117,7 @@ const AddDepartment = () => {
 
 const AddRole = () => { //is this correct?
   db.query('SELECT * FROM department', function (err, results) {
+    console.log("\n")
     console.table(results);
   });
   inquirer    
@@ -156,13 +158,6 @@ const AddRole = () => { //is this correct?
       console.log(result);
       OptionMenu();
     });
-    db.query(`INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)`, [response.AddTitle, response.AddSalary, response.AddDepartmentId], (err, result) => {
-      if (err) {
-        console.log(err);
-      }
-      console.log(result);
-      OptionMenu();
-    });
 
   })
 }
@@ -170,10 +165,29 @@ const AddRole = () => { //is this correct?
 
 
 const AddEmployee = () => { //is this correct?
-  db.query('SELECT * FROM role', function (err, results) {
-    console.log("\n")
-    console.table(results);
-  });
+  // const roles = await db.query('SELECT * FROM role', function(err, results){
+  //   if(err) {
+  //     console.log(err);
+  //   }
+  //   else{
+  //     const formattedRes = results.map((el) => {
+  //       return {
+  //         name: el.title,
+  //         value: el.id
+  //       }
+  //     });
+  //     return formattedRes;
+  //   }
+  // });
+  // console.log(roles);
+  db.query('SELECT * FROM role' , function(err, results){
+    if(err) {
+      console.log(err);
+    }
+    else{
+      console.table(results)
+    }
+  })
 
   inquirer    
   .prompt([
@@ -202,18 +216,17 @@ const AddEmployee = () => { //is this correct?
      {
       //provide list of avaliable role ids
       // WHEN I am presented with the following options: view all departments, view all roles, view all employees, add a department, add a role, add an employee, and update an employee role
-      type: "list",
+      type: "input",
       // message: "Which employee member do you want to add?",
       name: "AddManager",
-      message: "Enter the manageryou want to add:",
-      choices: []
+      message: "Enter the manager id you want to add:",
    }
 
      //Need to figure out how to add a Role Id...
 
   ])
   .then((response) => {
-    db.query(`INSERT INTO employee (first_name, last_name, role_id) VALUES (?, ?, ?)`, [response.AddFirst_name, response.AddLast_name, response.AddRoleId], (err, result) => {
+    db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`, [response.AddFirst_name, response.AddLast_name, response.AddRoleId, response.AddManager], (err, result) => {
       if (err) {
         console.log(err);
       }
