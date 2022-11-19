@@ -68,6 +68,8 @@ All testing was done by the developing team.
 * console.table
 * mysql2
 * cfonts
+* screencastify
+* javascript
 
 <hr>
 
