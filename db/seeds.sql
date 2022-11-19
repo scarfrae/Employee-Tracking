@@ -7,4 +7,10 @@ VALUES ("Engineer", 150000, 1),
 ("Engineer", 150000, 1),
 ("Doctor", 240000, 3);
 
+-- //insert employee seed to choose another employee as manager
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUE ("Sterling", "efsf", 2, NULL);
+
+
+
        
