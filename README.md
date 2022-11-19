@@ -1,8 +1,5 @@
 # *** Employee-Tracker ***
 
-[Deployed Application](https://scarfrae.github.io/react-portfolio/)
-
-<!-- deployed application -->
 ## **Description** 📚
 
 *Employee-Tracker * is a command-line app (using crud functionality), purposed at viewing and managing your company. Via the application you can view and add a department, role, or employee.   
@@ -41,6 +38,10 @@ To start the application invoke: node server
 ![Screenshot of add Section (department)](./images/addSection.png)
 ![Screenshot of add Section (role)](./images/addSection(r).png)
 ![Screenshot of add Section (employee)](./images/addSection(e).png)
+
+To view video walkthrough visit:
+https://watch.screencastify.com/v/fx1J22D82PBL3gY4olN3
+
 
 <hr>
 
